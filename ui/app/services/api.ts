@@ -278,7 +278,15 @@ export default class ApiService extends Service {
 
     // Application list settings
     let appList = project.applicationsList.map((app: Application.AsObject) => {
-      return new Application(app);
+      let settingsApp = new Application();
+      settingsApp.setName(app.name);
+      if (app.project) {
+        let proj = new Ref.Project();
+        proj.setProject(app.project.project);
+        settingsApp.setProject(proj);
+      }
+      settingsApp.setFileChangeSignal(app.fileChangeSignal);
+      return settingsApp;
     });
     ref.setApplicationsList(appList);
 

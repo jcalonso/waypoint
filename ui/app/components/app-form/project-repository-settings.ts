@@ -107,7 +107,7 @@ export default class AppFormProjectRepositorySettings extends Component<ProjectS
   }
 
   validateGitUrl() {
-    let gitUrl = parseUrl(this.project.dataSource.git.url);
+    let gitUrl = parseUrl(this.project?.dataSource?.git?.url);
     // If basic auth, match https url
     if (this.authBasic || this.authNotSet) {
       if (gitUrl.protocol !== 'https') {
@@ -153,18 +153,20 @@ export default class AppFormProjectRepositorySettings extends Component<ProjectS
 
   @action
   setBasicAuth(path: string, e: any) {
-    if (!this.git?.basic) {
-      this.git.basic = {
-        username: '',
-        password: '',
-      };
+    if (this.git) {
+      if (!this.git?.basic) {
+        this.git.basic = {
+          username: '',
+          password: '',
+        };
+      }
+      this.git.basic[path] = e.target.value;
     }
-    this.git.basic[path] = e.target.value;
   }
 
   @action
   setSshAuth(path: string, e: any) {
-    if (!this.project.dataSource?.git?.ssh) {
+    if (this.project.dataSource?.git && !this.project.dataSource?.git?.ssh) {
       this.project.dataSource.git.ssh = {
         user: '',
         password: '',
@@ -178,7 +180,9 @@ export default class AppFormProjectRepositorySettings extends Component<ProjectS
       value = btoa(value);
     }
 
-    this.project.dataSource.git.ssh[path] = value;
+    if (this.project.dataSource?.git?.ssh) {
+      this.project.dataSource.git.ssh[path] = value;
+    }
   }
 
   @action
