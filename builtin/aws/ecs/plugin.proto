@@ -4,6 +4,8 @@ package ecs;
 
 option go_package = "waypoint/builtin/aws/ecs";
 
+import "google/protobuf/any.proto";
+
 message Deployment {
   string url = 1;
   string task_arn = 2;
@@ -11,9 +13,64 @@ message Deployment {
   string target_group_arn = 4;
   string load_balancer_arn = 5;
   string cluster = 6;
+  google.protobuf.Any resource_state = 7;
 }
 
 message Release {
   string url = 1;
   string load_balancer_arn = 2;
 }
+
+// Resource contains the internal resource states.
+// TODO(izaak): Audit these - make sure we're using all of it.
+message Resource {
+  message Cluster {
+    string name = 1;
+    string arn = 2;
+  }
+  message ExecutionRole {
+    string name = 1;
+    string arn = 2;
+
+    // Indicates if an execution role was created by waypoint, and should be destroyed by waypoint
+    bool managed = 3;
+  }
+  message TaskRole {
+    string name = 1;
+    string arn = 2;
+  }
+  message Service {
+    string name = 1;
+    string arn = 2;
+  }
+  message TargetGroup {
+    string name = 1;
+    string arn = 2;
+    int64 port = 3;
+
+    // Indicates if a target group was created by waypoint, and should be destroyed by waypoint
+    bool managed = 4;
+  }
+  message LogGroup {
+    string name = 1;
+    string arn = 2;
+  }
+  message SecurityGroups {
+    repeated SecurityGroup security_groups = 1;
+    message SecurityGroup {
+      string name = 1;
+      string id = 2;
+
+      // Indicates if a security group was created by waypoint, and should be destroyed by waypoint
+      bool managed = 3;
+    }
+  }
+  message Subnets {
+    repeated Subnet subnets = 1;
+    message Subnet {
+      string id = 1;
+    }
+  }
+}
+
+

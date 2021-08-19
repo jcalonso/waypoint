@@ -9,6 +9,7 @@ package ecs
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	anypb "google.golang.org/protobuf/types/known/anypb"
 	reflect "reflect"
 	sync "sync"
 )
@@ -25,12 +26,13 @@ type Deployment struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Url             string `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
-	TaskArn         string `protobuf:"bytes,2,opt,name=task_arn,json=taskArn,proto3" json:"task_arn,omitempty"`
-	ServiceArn      string `protobuf:"bytes,3,opt,name=service_arn,json=serviceArn,proto3" json:"service_arn,omitempty"`
-	TargetGroupArn  string `protobuf:"bytes,4,opt,name=target_group_arn,json=targetGroupArn,proto3" json:"target_group_arn,omitempty"`
-	LoadBalancerArn string `protobuf:"bytes,5,opt,name=load_balancer_arn,json=loadBalancerArn,proto3" json:"load_balancer_arn,omitempty"`
-	Cluster         string `protobuf:"bytes,6,opt,name=cluster,proto3" json:"cluster,omitempty"`
+	Url             string     `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	TaskArn         string     `protobuf:"bytes,2,opt,name=task_arn,json=taskArn,proto3" json:"task_arn,omitempty"`
+	ServiceArn      string     `protobuf:"bytes,3,opt,name=service_arn,json=serviceArn,proto3" json:"service_arn,omitempty"`
+	TargetGroupArn  string     `protobuf:"bytes,4,opt,name=target_group_arn,json=targetGroupArn,proto3" json:"target_group_arn,omitempty"`
+	LoadBalancerArn string     `protobuf:"bytes,5,opt,name=load_balancer_arn,json=loadBalancerArn,proto3" json:"load_balancer_arn,omitempty"`
+	Cluster         string     `protobuf:"bytes,6,opt,name=cluster,proto3" json:"cluster,omitempty"`
+	ResourceState   *anypb.Any `protobuf:"bytes,7,opt,name=resource_state,json=resourceState,proto3" json:"resource_state,omitempty"`
 }
 
 func (x *Deployment) Reset() {
@@ -107,6 +109,13 @@ func (x *Deployment) GetCluster() string {
 	return ""
 }
 
+func (x *Deployment) GetResourceState() *anypb.Any {
+	if x != nil {
+		return x.ResourceState
+	}
+	return nil
+}
+
 type Release struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -162,32 +171,680 @@ func (x *Release) GetLoadBalancerArn() string {
 	return ""
 }
 
+// Resource contains the internal resource states.
+// TODO(izaak): Audit these - make sure we're using all of it.
+type Resource struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *Resource) Reset() {
+	*x = Resource{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource) ProtoMessage() {}
+
+func (x *Resource) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource.ProtoReflect.Descriptor instead.
+func (*Resource) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2}
+}
+
+type Resource_Cluster struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Arn  string `protobuf:"bytes,2,opt,name=arn,proto3" json:"arn,omitempty"`
+}
+
+func (x *Resource_Cluster) Reset() {
+	*x = Resource_Cluster{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_Cluster) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_Cluster) ProtoMessage() {}
+
+func (x *Resource_Cluster) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_Cluster.ProtoReflect.Descriptor instead.
+func (*Resource_Cluster) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 0}
+}
+
+func (x *Resource_Cluster) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Resource_Cluster) GetArn() string {
+	if x != nil {
+		return x.Arn
+	}
+	return ""
+}
+
+type Resource_ExecutionRole struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Arn  string `protobuf:"bytes,2,opt,name=arn,proto3" json:"arn,omitempty"`
+	// Indicates if an execution role was created by waypoint, and should be destroyed by waypoint
+	Managed bool `protobuf:"varint,3,opt,name=managed,proto3" json:"managed,omitempty"`
+}
+
+func (x *Resource_ExecutionRole) Reset() {
+	*x = Resource_ExecutionRole{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_ExecutionRole) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_ExecutionRole) ProtoMessage() {}
+
+func (x *Resource_ExecutionRole) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_ExecutionRole.ProtoReflect.Descriptor instead.
+func (*Resource_ExecutionRole) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 1}
+}
+
+func (x *Resource_ExecutionRole) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Resource_ExecutionRole) GetArn() string {
+	if x != nil {
+		return x.Arn
+	}
+	return ""
+}
+
+func (x *Resource_ExecutionRole) GetManaged() bool {
+	if x != nil {
+		return x.Managed
+	}
+	return false
+}
+
+type Resource_TaskRole struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Arn  string `protobuf:"bytes,2,opt,name=arn,proto3" json:"arn,omitempty"`
+}
+
+func (x *Resource_TaskRole) Reset() {
+	*x = Resource_TaskRole{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_TaskRole) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_TaskRole) ProtoMessage() {}
+
+func (x *Resource_TaskRole) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_TaskRole.ProtoReflect.Descriptor instead.
+func (*Resource_TaskRole) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 2}
+}
+
+func (x *Resource_TaskRole) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Resource_TaskRole) GetArn() string {
+	if x != nil {
+		return x.Arn
+	}
+	return ""
+}
+
+type Resource_Service struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Arn  string `protobuf:"bytes,2,opt,name=arn,proto3" json:"arn,omitempty"`
+}
+
+func (x *Resource_Service) Reset() {
+	*x = Resource_Service{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_Service) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_Service) ProtoMessage() {}
+
+func (x *Resource_Service) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_Service.ProtoReflect.Descriptor instead.
+func (*Resource_Service) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 3}
+}
+
+func (x *Resource_Service) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Resource_Service) GetArn() string {
+	if x != nil {
+		return x.Arn
+	}
+	return ""
+}
+
+type Resource_TargetGroup struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Arn  string `protobuf:"bytes,2,opt,name=arn,proto3" json:"arn,omitempty"`
+	Port int64  `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty"`
+	// Indicates if a target group was created by waypoint, and should be destroyed by waypoint
+	Managed bool `protobuf:"varint,4,opt,name=managed,proto3" json:"managed,omitempty"`
+}
+
+func (x *Resource_TargetGroup) Reset() {
+	*x = Resource_TargetGroup{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_TargetGroup) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_TargetGroup) ProtoMessage() {}
+
+func (x *Resource_TargetGroup) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_TargetGroup.ProtoReflect.Descriptor instead.
+func (*Resource_TargetGroup) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 4}
+}
+
+func (x *Resource_TargetGroup) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Resource_TargetGroup) GetArn() string {
+	if x != nil {
+		return x.Arn
+	}
+	return ""
+}
+
+func (x *Resource_TargetGroup) GetPort() int64 {
+	if x != nil {
+		return x.Port
+	}
+	return 0
+}
+
+func (x *Resource_TargetGroup) GetManaged() bool {
+	if x != nil {
+		return x.Managed
+	}
+	return false
+}
+
+type Resource_LogGroup struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Arn  string `protobuf:"bytes,2,opt,name=arn,proto3" json:"arn,omitempty"`
+}
+
+func (x *Resource_LogGroup) Reset() {
+	*x = Resource_LogGroup{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_LogGroup) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_LogGroup) ProtoMessage() {}
+
+func (x *Resource_LogGroup) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_LogGroup.ProtoReflect.Descriptor instead.
+func (*Resource_LogGroup) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 5}
+}
+
+func (x *Resource_LogGroup) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Resource_LogGroup) GetArn() string {
+	if x != nil {
+		return x.Arn
+	}
+	return ""
+}
+
+type Resource_SecurityGroups struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	SecurityGroups []*Resource_SecurityGroups_SecurityGroup `protobuf:"bytes,1,rep,name=security_groups,json=securityGroups,proto3" json:"security_groups,omitempty"`
+}
+
+func (x *Resource_SecurityGroups) Reset() {
+	*x = Resource_SecurityGroups{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_SecurityGroups) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_SecurityGroups) ProtoMessage() {}
+
+func (x *Resource_SecurityGroups) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_SecurityGroups.ProtoReflect.Descriptor instead.
+func (*Resource_SecurityGroups) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 6}
+}
+
+func (x *Resource_SecurityGroups) GetSecurityGroups() []*Resource_SecurityGroups_SecurityGroup {
+	if x != nil {
+		return x.SecurityGroups
+	}
+	return nil
+}
+
+type Resource_Subnets struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Subnets []*Resource_Subnets_Subnet `protobuf:"bytes,1,rep,name=subnets,proto3" json:"subnets,omitempty"`
+}
+
+func (x *Resource_Subnets) Reset() {
+	*x = Resource_Subnets{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_Subnets) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_Subnets) ProtoMessage() {}
+
+func (x *Resource_Subnets) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_Subnets.ProtoReflect.Descriptor instead.
+func (*Resource_Subnets) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 7}
+}
+
+func (x *Resource_Subnets) GetSubnets() []*Resource_Subnets_Subnet {
+	if x != nil {
+		return x.Subnets
+	}
+	return nil
+}
+
+type Resource_SecurityGroups_SecurityGroup struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Id   string `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	// Indicates if a security group was created by waypoint, and should be destroyed by waypoint
+	Managed bool `protobuf:"varint,3,opt,name=managed,proto3" json:"managed,omitempty"`
+}
+
+func (x *Resource_SecurityGroups_SecurityGroup) Reset() {
+	*x = Resource_SecurityGroups_SecurityGroup{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_SecurityGroups_SecurityGroup) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_SecurityGroups_SecurityGroup) ProtoMessage() {}
+
+func (x *Resource_SecurityGroups_SecurityGroup) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_SecurityGroups_SecurityGroup.ProtoReflect.Descriptor instead.
+func (*Resource_SecurityGroups_SecurityGroup) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 6, 0}
+}
+
+func (x *Resource_SecurityGroups_SecurityGroup) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Resource_SecurityGroups_SecurityGroup) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Resource_SecurityGroups_SecurityGroup) GetManaged() bool {
+	if x != nil {
+		return x.Managed
+	}
+	return false
+}
+
+type Resource_Subnets_Subnet struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *Resource_Subnets_Subnet) Reset() {
+	*x = Resource_Subnets_Subnet{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Resource_Subnets_Subnet) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource_Subnets_Subnet) ProtoMessage() {}
+
+func (x *Resource_Subnets_Subnet) ProtoReflect() protoreflect.Message {
+	mi := &file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource_Subnets_Subnet.ProtoReflect.Descriptor instead.
+func (*Resource_Subnets_Subnet) Descriptor() ([]byte, []int) {
+	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP(), []int{2, 7, 0}
+}
+
+func (x *Resource_Subnets_Subnet) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
 var File_waypoint_builtin_aws_ecs_plugin_proto protoreflect.FileDescriptor
 
 var file_waypoint_builtin_aws_ecs_plugin_proto_rawDesc = []byte{
 	0x0a, 0x25, 0x77, 0x61, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x2f, 0x62, 0x75, 0x69, 0x6c, 0x74,
 	0x69, 0x6e, 0x2f, 0x61, 0x77, 0x73, 0x2f, 0x65, 0x63, 0x73, 0x2f, 0x70, 0x6c, 0x75, 0x67, 0x69,
-	0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x03, 0x65, 0x63, 0x73, 0x22, 0xca, 0x01, 0x0a,
-	0x0a, 0x44, 0x65, 0x70, 0x6c, 0x6f, 0x79, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x75,
-	0x72, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x19, 0x0a,
-	0x08, 0x74, 0x61, 0x73, 0x6b, 0x5f, 0x61, 0x72, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x07, 0x74, 0x61, 0x73, 0x6b, 0x41, 0x72, 0x6e, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x5f, 0x61, 0x72, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x73,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x41, 0x72, 0x6e, 0x12, 0x28, 0x0a, 0x10, 0x74, 0x61, 0x72,
-	0x67, 0x65, 0x74, 0x5f, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x5f, 0x61, 0x72, 0x6e, 0x18, 0x04, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x0e, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x47, 0x72, 0x6f, 0x75, 0x70,
-	0x41, 0x72, 0x6e, 0x12, 0x2a, 0x0a, 0x11, 0x6c, 0x6f, 0x61, 0x64, 0x5f, 0x62, 0x61, 0x6c, 0x61,
-	0x6e, 0x63, 0x65, 0x72, 0x5f, 0x61, 0x72, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0f,
-	0x6c, 0x6f, 0x61, 0x64, 0x42, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x72, 0x41, 0x72, 0x6e, 0x12,
-	0x18, 0x0a, 0x07, 0x63, 0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x07, 0x63, 0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x22, 0x47, 0x0a, 0x07, 0x52, 0x65, 0x6c,
-	0x65, 0x61, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x2a, 0x0a, 0x11, 0x6c, 0x6f, 0x61, 0x64, 0x5f, 0x62,
-	0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x72, 0x5f, 0x61, 0x72, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x0f, 0x6c, 0x6f, 0x61, 0x64, 0x42, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x72, 0x41,
-	0x72, 0x6e, 0x42, 0x1a, 0x5a, 0x18, 0x77, 0x61, 0x79, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x2f, 0x62,
-	0x75, 0x69, 0x6c, 0x74, 0x69, 0x6e, 0x2f, 0x61, 0x77, 0x73, 0x2f, 0x65, 0x63, 0x73, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x03, 0x65, 0x63, 0x73, 0x1a, 0x19, 0x67, 0x6f,
+	0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x61, 0x6e,
+	0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x87, 0x02, 0x0a, 0x0a, 0x44, 0x65, 0x70, 0x6c,
+	0x6f, 0x79, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x19, 0x0a, 0x08, 0x74, 0x61, 0x73, 0x6b,
+	0x5f, 0x61, 0x72, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x74, 0x61, 0x73, 0x6b,
+	0x41, 0x72, 0x6e, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x61,
+	0x72, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x41, 0x72, 0x6e, 0x12, 0x28, 0x0a, 0x10, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x5f, 0x67,
+	0x72, 0x6f, 0x75, 0x70, 0x5f, 0x61, 0x72, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e,
+	0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x41, 0x72, 0x6e, 0x12, 0x2a,
+	0x0a, 0x11, 0x6c, 0x6f, 0x61, 0x64, 0x5f, 0x62, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x72, 0x5f,
+	0x61, 0x72, 0x6e, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0f, 0x6c, 0x6f, 0x61, 0x64, 0x42,
+	0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x72, 0x41, 0x72, 0x6e, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6c,
+	0x75, 0x73, 0x74, 0x65, 0x72, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6c, 0x75,
+	0x73, 0x74, 0x65, 0x72, 0x12, 0x3b, 0x0a, 0x0e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65,
+	0x5f, 0x73, 0x74, 0x61, 0x74, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x67,
+	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x41,
+	0x6e, 0x79, 0x52, 0x0d, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x53, 0x74, 0x61, 0x74,
+	0x65, 0x22, 0x47, 0x0a, 0x07, 0x52, 0x65, 0x6c, 0x65, 0x61, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03,
+	0x75, 0x72, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x2a,
+	0x0a, 0x11, 0x6c, 0x6f, 0x61, 0x64, 0x5f, 0x62, 0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x72, 0x5f,
+	0x61, 0x72, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0f, 0x6c, 0x6f, 0x61, 0x64, 0x42,
+	0x61, 0x6c, 0x61, 0x6e, 0x63, 0x65, 0x72, 0x41, 0x72, 0x6e, 0x22, 0x98, 0x05, 0x0a, 0x08, 0x52,
+	0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x1a, 0x2f, 0x0a, 0x07, 0x43, 0x6c, 0x75, 0x73, 0x74,
+	0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x72, 0x6e, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x03, 0x61, 0x72, 0x6e, 0x1a, 0x4f, 0x0a, 0x0d, 0x45, 0x78, 0x65, 0x63,
+	0x75, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x6f, 0x6c, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a,
+	0x03, 0x61, 0x72, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x61, 0x72, 0x6e, 0x12,
+	0x18, 0x0a, 0x07, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08,
+	0x52, 0x07, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x64, 0x1a, 0x30, 0x0a, 0x08, 0x54, 0x61, 0x73,
+	0x6b, 0x52, 0x6f, 0x6c, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x72, 0x6e,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x61, 0x72, 0x6e, 0x1a, 0x2f, 0x0a, 0x07, 0x53,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x61, 0x72,
+	0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x61, 0x72, 0x6e, 0x1a, 0x61, 0x0a, 0x0b,
+	0x54, 0x61, 0x72, 0x67, 0x65, 0x74, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x12, 0x12, 0x0a, 0x04, 0x6e,
+	0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12,
+	0x10, 0x0a, 0x03, 0x61, 0x72, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x61, 0x72,
+	0x6e, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x6f, 0x72, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x04, 0x70, 0x6f, 0x72, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x64,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x64, 0x1a,
+	0x30, 0x0a, 0x08, 0x4c, 0x6f, 0x67, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x12, 0x12, 0x0a, 0x04, 0x6e,
+	0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12,
+	0x10, 0x0a, 0x03, 0x61, 0x72, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x61, 0x72,
+	0x6e, 0x1a, 0xb4, 0x01, 0x0a, 0x0e, 0x53, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79, 0x47, 0x72,
+	0x6f, 0x75, 0x70, 0x73, 0x12, 0x53, 0x0a, 0x0f, 0x73, 0x65, 0x63, 0x75, 0x72, 0x69, 0x74, 0x79,
+	0x5f, 0x67, 0x72, 0x6f, 0x75, 0x70, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e,
+	0x65, 0x63, 0x73, 0x2e, 0x52, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2e, 0x53, 0x65, 0x63,
+	0x75, 0x72, 0x69, 0x74, 0x79, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x73, 0x2e, 0x53, 0x65, 0x63, 0x75,
+	0x72, 0x69, 0x74, 0x79, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x52, 0x0e, 0x73, 0x65, 0x63, 0x75, 0x72,
+	0x69, 0x74, 0x79, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x73, 0x1a, 0x4d, 0x0a, 0x0d, 0x53, 0x65, 0x63,
+	0x75, 0x72, 0x69, 0x74, 0x79, 0x47, 0x72, 0x6f, 0x75, 0x70, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61,
+	0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x18,
+	0x0a, 0x07, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52,
+	0x07, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x64, 0x1a, 0x5b, 0x0a, 0x07, 0x53, 0x75, 0x62, 0x6e,
+	0x65, 0x74, 0x73, 0x12, 0x36, 0x0a, 0x07, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x73, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x1c, 0x2e, 0x65, 0x63, 0x73, 0x2e, 0x52, 0x65, 0x73, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x2e, 0x53, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x73, 0x2e, 0x53, 0x75, 0x62, 0x6e,
+	0x65, 0x74, 0x52, 0x07, 0x73, 0x75, 0x62, 0x6e, 0x65, 0x74, 0x73, 0x1a, 0x18, 0x0a, 0x06, 0x53,
+	0x75, 0x62, 0x6e, 0x65, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x02, 0x69, 0x64, 0x42, 0x1a, 0x5a, 0x18, 0x77, 0x61, 0x79, 0x70, 0x6f, 0x69, 0x6e,
+	0x74, 0x2f, 0x62, 0x75, 0x69, 0x6c, 0x74, 0x69, 0x6e, 0x2f, 0x61, 0x77, 0x73, 0x2f, 0x65, 0x63,
+	0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -202,17 +859,32 @@ func file_waypoint_builtin_aws_ecs_plugin_proto_rawDescGZIP() []byte {
 	return file_waypoint_builtin_aws_ecs_plugin_proto_rawDescData
 }
 
-var file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_waypoint_builtin_aws_ecs_plugin_proto_goTypes = []interface{}{
-	(*Deployment)(nil), // 0: ecs.Deployment
-	(*Release)(nil),    // 1: ecs.Release
+	(*Deployment)(nil),                            // 0: ecs.Deployment
+	(*Release)(nil),                               // 1: ecs.Release
+	(*Resource)(nil),                              // 2: ecs.Resource
+	(*Resource_Cluster)(nil),                      // 3: ecs.Resource.Cluster
+	(*Resource_ExecutionRole)(nil),                // 4: ecs.Resource.ExecutionRole
+	(*Resource_TaskRole)(nil),                     // 5: ecs.Resource.TaskRole
+	(*Resource_Service)(nil),                      // 6: ecs.Resource.Service
+	(*Resource_TargetGroup)(nil),                  // 7: ecs.Resource.TargetGroup
+	(*Resource_LogGroup)(nil),                     // 8: ecs.Resource.LogGroup
+	(*Resource_SecurityGroups)(nil),               // 9: ecs.Resource.SecurityGroups
+	(*Resource_Subnets)(nil),                      // 10: ecs.Resource.Subnets
+	(*Resource_SecurityGroups_SecurityGroup)(nil), // 11: ecs.Resource.SecurityGroups.SecurityGroup
+	(*Resource_Subnets_Subnet)(nil),               // 12: ecs.Resource.Subnets.Subnet
+	(*anypb.Any)(nil),                             // 13: google.protobuf.Any
 }
 var file_waypoint_builtin_aws_ecs_plugin_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	13, // 0: ecs.Deployment.resource_state:type_name -> google.protobuf.Any
+	11, // 1: ecs.Resource.SecurityGroups.security_groups:type_name -> ecs.Resource.SecurityGroups.SecurityGroup
+	12, // 2: ecs.Resource.Subnets.subnets:type_name -> ecs.Resource.Subnets.Subnet
+	3,  // [3:3] is the sub-list for method output_type
+	3,  // [3:3] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_waypoint_builtin_aws_ecs_plugin_proto_init() }
@@ -245,6 +917,138 @@ func file_waypoint_builtin_aws_ecs_plugin_proto_init() {
 				return nil
 			}
 		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_Cluster); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_ExecutionRole); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_TaskRole); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_Service); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_TargetGroup); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_LogGroup); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_SecurityGroups); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_Subnets); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_SecurityGroups_SecurityGroup); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_waypoint_builtin_aws_ecs_plugin_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Resource_Subnets_Subnet); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -252,7 +1056,7 @@ func file_waypoint_builtin_aws_ecs_plugin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_waypoint_builtin_aws_ecs_plugin_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
